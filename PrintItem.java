@@ -50,4 +50,9 @@ public class PrintItem
     {
         return printDuration;
     }
+
+    int getId()
+    {
+        return id;
+    }
 }

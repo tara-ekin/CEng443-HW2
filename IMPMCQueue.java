@@ -1,7 +1,16 @@
-
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public interface IMPMCQueue<T>
 {
+    Lock lock = new ReentrantLock();
+    Condition notEmpty = lock.newCondition();
+    Condition full = lock.newCondition();
+
+    Lock getLock();
+    Condition getNotEmpty();
+    Condition getFull();
     /**
      * Adds data to the queue, waits if queue is full
      *

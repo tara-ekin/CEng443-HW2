@@ -4,10 +4,14 @@ public class Main
    {
 
        // TODO: You may want to implement this class to test your code
+       public void run() {
+           System.out.println("Test");
+       }
 
        public void join()
        {
            // TODO: Provide a thread join functionality for the main thread
+           System.out.println("Test");
        }
    }
 
