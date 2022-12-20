@@ -43,9 +43,19 @@ public class PrinterRoom
         }
 
         public void stop() {
-            exit = true;
-            SyncLogger.Instance().Log(SyncLogger.ThreadType.CONSUMER, this.id,
-                    String.format(SyncLogger.FORMAT_TERMINATING));
+            roomQueue.getLock().lock();
+            try {
+                if (roomQueue.RemainingSize() != 0) {
+                    roomQueue.getEmpty().await();
+                }
+                exit = true;
+                SyncLogger.Instance().Log(SyncLogger.ThreadType.CONSUMER, this.id,
+                        String.format(SyncLogger.FORMAT_TERMINATING));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } finally {
+                roomQueue.getLock().unlock();
+            }
         }
     }
 

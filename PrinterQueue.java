@@ -34,8 +34,18 @@ public class PrinterQueue implements IMPMCQueue<PrintItem>
     }
 
     public PrintItem Consume() throws QueueIsClosedExecption {
-        return priorityBlockingQueue.poll();
+        lock.lock();
+        PrintItem printItem = priorityBlockingQueue.poll();
+        try {
+            if (priorityBlockingQueue.size() == 0) {
+                empty.signalAll();
+            }
+        } finally {
+            lock.unlock();
+        }
+        return printItem;
     }
+
     public int RemainingSize() {
         return priorityBlockingQueue.size();
     }
@@ -60,6 +70,11 @@ public class PrinterQueue implements IMPMCQueue<PrintItem>
     @Override
     public Condition getNotEmpty() {
         return notEmpty;
+    }
+
+    @Override
+    public Condition getEmpty() {
+        return empty;
     }
 
     @Override

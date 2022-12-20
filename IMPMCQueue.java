@@ -6,11 +6,13 @@ public interface IMPMCQueue<T>
 {
     Lock lock = new ReentrantLock();
     Condition notEmpty = lock.newCondition();
+    Condition empty = lock.newCondition();
     Condition full = lock.newCondition();
     Condition roomClosed = lock.newCondition();
 
     Lock getLock();
     Condition getNotEmpty();
+    Condition getEmpty();
     Condition getFull();
     Condition getRoomClosed();
     /**
