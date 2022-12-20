@@ -54,5 +54,6 @@ public class Main
         // This should print only after all elements are closed (here we wait 3 seconds so it should be immediate)
         SyncLogger.Instance().Log(SyncLogger.ThreadType.MAIN_THREAD, 0,
                                   "Room is Closed");
+        room.getPrinterThreads().forEach(e -> System.out.println(e.isAlive()));
     }
 }

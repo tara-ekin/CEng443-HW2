@@ -1,7 +1,6 @@
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class PrinterQueue implements IMPMCQueue<PrintItem>
 {
@@ -28,7 +27,7 @@ public class PrinterQueue implements IMPMCQueue<PrintItem>
                 full.signalAll();                       // did not add wait yet
             }
             priorityBlockingQueue.add(data);
-            notEmpty.signal();                          // signal or signalAll?
+            notEmpty.signalAll();                          // signal or signalAll?
         } finally {
             lock.unlock();
         }
@@ -66,5 +65,10 @@ public class PrinterQueue implements IMPMCQueue<PrintItem>
     @Override
     public Condition getFull() {
         return full;
+    }
+
+    @Override
+    public Condition getRoomClosed() {
+        return roomClosed;
     }
 }
