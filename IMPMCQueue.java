@@ -8,7 +8,7 @@ public interface IMPMCQueue<T>
     Condition notEmpty = lock.newCondition();
     Condition empty = lock.newCondition();
     Condition full = lock.newCondition();
-    Condition roomClosed = lock.newCondition();
+    Condition queueClosed = lock.newCondition();
 
     Lock getLock();
     Condition getNotEmpty();

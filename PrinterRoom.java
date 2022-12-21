@@ -109,7 +109,7 @@ public class PrinterRoom
     {
         // TODO: Implement
         roomOpen = false;
+        roomQueue.CloseQueue();
         printers.forEach(Printer::stop);
-//        roomQueue.getRoomClosed().signalAll();
     }
 }

@@ -51,7 +51,12 @@ public class PrinterQueue implements IMPMCQueue<PrintItem>
     }
 
     public void CloseQueue() {
-        System.out.println("Test");
+        lock.lock();
+        try {
+            queueClosed.signalAll();
+        } finally {
+            lock.unlock();
+        }
     }
 
     public int getMaxQueueSize() {
@@ -84,6 +89,6 @@ public class PrinterQueue implements IMPMCQueue<PrintItem>
 
     @Override
     public Condition getRoomClosed() {
-        return roomClosed;
+        return queueClosed;
     }
 }
