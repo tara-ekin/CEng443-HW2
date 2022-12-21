@@ -27,8 +27,11 @@ public class PrinterRoom
             while (!exit) {
                 roomQueue.getLock().lock();
                 try {
-                    while (roomQueue == null || roomQueue.RemainingSize() == 0) {
+                    while (roomOpen && (roomQueue == null || roomQueue.RemainingSize() == 0)) {
                         roomQueue.getNotEmpty().await();
+                    }
+                    if (!roomOpen) {
+                        break;
                     }
                     PrintItem printedItem = roomQueue.Consume();
                     printedItem.print();
@@ -108,8 +111,16 @@ public class PrinterRoom
     public void CloseRoom()
     {
         // TODO: Implement
-        roomOpen = false;
-        roomQueue.CloseQueue();
-        printers.forEach(Printer::stop);
+        roomQueue.getLock().lock();
+        try {
+            roomOpen = false;
+            roomQueue.getNotEmpty().signalAll();
+            roomQueue.CloseQueue();
+            printers.forEach(Printer::stop);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            roomQueue.getLock().unlock();
+        }
     }
 }
