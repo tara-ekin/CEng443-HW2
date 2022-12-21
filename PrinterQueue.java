@@ -37,6 +37,7 @@ public class PrinterQueue implements IMPMCQueue<PrintItem>
         lock.lock();
         PrintItem printItem = priorityBlockingQueue.poll();
         try {
+            notFull.signalAll();
             if (priorityBlockingQueue.size() == 0) {
                 empty.signalAll();
             }
@@ -85,6 +86,11 @@ public class PrinterQueue implements IMPMCQueue<PrintItem>
     @Override
     public Condition getFull() {
         return full;
+    }
+
+    @Override
+    public Condition getNotFull() {
+        return notFull;
     }
 
     @Override

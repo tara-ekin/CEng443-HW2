@@ -8,13 +8,17 @@ public interface IMPMCQueue<T>
     Condition notEmpty = lock.newCondition();
     Condition empty = lock.newCondition();
     Condition full = lock.newCondition();
+    Condition notFull = lock.newCondition();
     Condition queueClosed = lock.newCondition();
 
     Lock getLock();
     Condition getNotEmpty();
     Condition getEmpty();
     Condition getFull();
+    Condition getNotFull();
     Condition getRoomClosed();
+
+    public int getMaxQueueSize();
     /**
      * Adds data to the queue, waits if queue is full
      *

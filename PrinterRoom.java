@@ -63,20 +63,8 @@ public class PrinterRoom
     }
 
     private IMPMCQueue<PrintItem> roomQueue;
-
-    public IMPMCQueue<PrintItem> getRoomQueue() {
-        return this.roomQueue;
-    }
     private final List<Printer> printers;
-
-    public List<Printer> getPrinters() {
-        return this.printers;
-    }
     private final List<Thread> printerThreads = new ArrayList<>();
-    public List<Thread> getPrinterThreads() {
-        return this.printerThreads;
-    }
-
     private Boolean roomOpen;
 
     public PrinterRoom(int printerCount, int maxElementCount)
@@ -98,10 +86,22 @@ public class PrinterRoom
     {
         // TODO: Implement
         if (roomOpen) {
-            SyncLogger.Instance().Log(SyncLogger.ThreadType.PRODUCER, producerId,
-                    String.format(SyncLogger.FORMAT_ADD, item));
-
-            roomQueue.Add(item);
+            roomQueue.getLock().lock();
+            try {
+                SyncLogger.Instance().Log(SyncLogger.ThreadType.PRODUCER, producerId,
+                        String.format(SyncLogger.FORMAT_ADD, item));
+                if (roomQueue.RemainingSize() == roomQueue.getMaxQueueSize()) {
+                    roomQueue.getNotFull().await();
+                    if (!roomOpen) {
+                        return false;
+                    }
+                }
+                roomQueue.Add(item);           // signalling the queue notEmpty condition is done inside the add method
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            } finally {
+                roomQueue.getLock().unlock();
+            }
             return true;
         } else {
             return false;
