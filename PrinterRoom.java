@@ -84,7 +84,6 @@ public class PrinterRoom
 
     public boolean SubmitPrint(PrintItem item, int producerId)
     {
-        // TODO: Implement
         if (roomOpen) {
             roomQueue.getLock().lock();
             try {
@@ -110,7 +109,6 @@ public class PrinterRoom
 
     public void CloseRoom()
     {
-        // TODO: Implement
         roomQueue.getLock().lock();
         try {
             roomOpen = false;
